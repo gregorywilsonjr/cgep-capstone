@@ -3,7 +3,7 @@
     "uuid": "a7fa51bc-bad6-4b16-9d89-a5ef2be2b3a1",
     "metadata": {
       "title": "Acme Health Patient Intake API — GRC wrap",
-      "last-modified": "2026-09-11T01:30:00.000000+00:00",
+      "last-modified": "2026-09-11T01:45:00.000000+00:00",
       "version": "1.0.0",
       "oscal-version": "1.2.1",
       "parties": [
@@ -28,7 +28,7 @@
           {
             "uuid": "f2c5bc13-7437-45b8-8408-aed8ed59c554",
             "source": "../catalogs/hipaa-security-rule.json",
-            "description": "HIPAA Security Rule safeguards implemented by this wrap. Catalog is a 164.x subset aligned to NIST SP 800-66 Rev. 2 (https://csrc.nist.gov/pubs/sp/800/66/r2/final). Evidence objects are written by .github/workflows/grc-gate.yml into s3://acme-health-intake-evidence-a9082633 (COMPLIANCE, 30 days). Replace PENDING in hrefs with the first merged-run receipt after the pipeline has signed.",
+            "description": "HIPAA Security Rule safeguards implemented by this wrap. Catalog is a 164.x subset aligned to NIST SP 800-66 Rev. 2 (https://csrc.nist.gov/pubs/sp/800/66/r2/final). Evidence objects are written by .github/workflows/grc-gate.yml into s3://acme-health-intake-evidence-a9082633 (COMPLIANCE, 30 days). Assessor run: 34551829023 (merge of PR #1 to main).",
             "implemented-requirements": [
               {
                 "uuid": "83648f6d-c171-497e-8e3d-25f8a012d8cf",
@@ -46,8 +46,8 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
-                    "text": "Signed grc-gate bundle (plan.json). Fill run id and versionId after the first successful Actions upload."
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/34551829023/evidence-34551829023-1a205b656234f9c3a0d21ce48c7ba6b2627c4f18.tar.gz?versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr",
+                    "text": "Signed grc-gate bundle from merge to main (run 34551829023). Cosign + SHA-256 + COMPLIANCE Object Lock."
                   }
                 ]
               },
@@ -66,8 +66,8 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
-                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/34551829023/evidence-34551829023-1a205b656234f9c3a0d21ce48c7ba6b2627c4f18.tar.gz?versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr",
+                    "text": "Signed grc-gate bundle from merge to main (run 34551829023)."
                   }
                 ]
               },
@@ -86,8 +86,8 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
-                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/34551829023/evidence-34551829023-1a205b656234f9c3a0d21ce48c7ba6b2627c4f18.tar.gz?versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr",
+                    "text": "Signed grc-gate bundle from merge to main (run 34551829023)."
                   }
                 ]
               },
@@ -104,8 +104,8 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
-                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/34551829023/evidence-34551829023-1a205b656234f9c3a0d21ce48c7ba6b2627c4f18.tar.gz?versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr",
+                    "text": "Signed grc-gate bundle from merge to main (run 34551829023)."
                   }
                 ]
               },
@@ -123,8 +123,8 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
-                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/34551829023/evidence-34551829023-1a205b656234f9c3a0d21ce48c7ba6b2627c4f18.tar.gz?versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr",
+                    "text": "Signed grc-gate bundle from merge to main (run 34551829023)."
                   }
                 ]
               }
