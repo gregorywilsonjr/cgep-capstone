@@ -6,7 +6,7 @@ HIPAA Security Rule subset for the Acme Health intake wrap.
 |---|---|
 | [`catalogs/hipaa-security-rule.json`](catalogs/hipaa-security-rule.json) | 164.x controls this component claims. Not an official NIST catalog; aligned to SP 800-66 Rev. 2. |
 | [`profiles/cge-p-minimum.json`](profiles/cge-p-minimum.json) | Selects those five control IDs. |
-| [`components/acme-health-intake.json`](components/acme-health-intake.json) | What Terraform actually built. Evidence `href`s point at `s3://acme-health-intake-evidence-a9082633` once the first `grc-gate` run has a `versionId`. |
+| [`components/acme-health-intake.json`](components/acme-health-intake.json) | What Terraform actually built. Evidence `href`s point at run `34551829023` in `s3://acme-health-intake-evidence-a9082633`. |
 
 `compliance-trestle` 5.1.x expects a trestle workspace, not these paths as-is:
 

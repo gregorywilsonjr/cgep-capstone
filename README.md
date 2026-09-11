@@ -29,8 +29,8 @@ make test AWS_PROFILE=sandbox
 # trestle validate -t profile -n cge-p-minimum
 # trestle validate -t component-definition -n acme-health-intake
 
-# 5. Evidence chain (after the first signed Actions run on this repo)
-bash scripts/verify-evidence.sh <run_id> \
+# 5. Evidence chain
+bash scripts/verify-evidence.sh 34551829023 \
   --vault acme-health-intake-evidence-a9082633 \
   --profile sandbox
 # expect: CHAIN INTACT

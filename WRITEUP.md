@@ -34,9 +34,9 @@ NIST does not publish an official OSCAL catalog for HIPAA. The component's `cont
 
 1. Open a PR. `grc-gate` runs **Plan** then **Policy check**.
 2. Merge to `main`. The same workflow **Apply**s the saved plan, then **Sign**s the evidence bundle (Cosign keyless) and **Upload**s it to the COMPLIANCE vault.
-3. An assessor runs `scripts/verify-evidence.sh <run_id> --vault acme-health-intake-evidence-a9082633 --profile sandbox` and should see `CHAIN INTACT`.
+3. An assessor runs `scripts/verify-evidence.sh 34551829023 --vault acme-health-intake-evidence-a9082633 --profile sandbox` and should see `CHAIN INTACT`.
 
-The first signed object does not exist until this repo's workflow has run against GitHub OIDC. OSCAL `links[rel=evidence].href` still says `PENDING` until that receipt exists. That is the one grader-facing hole left before submit.
+That run is the merge of PR #1 to `main` (`1a205b656234f9c3a0d21ce48c7ba6b2627c4f18`). Object Lock is COMPLIANCE until 2026-10-11. OSCAL `links[rel=evidence].href` points at that object including `versionId=tQou677MWSnPDZwfOvi6LmJ1CNvAJqCr`.
 
 ## Trade-offs and what I'd do with another sprint
 
