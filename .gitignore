@@ -7,6 +7,8 @@
 !terraform.tfvars.example
 tfplan
 *.tfplan
+plan.json
+plan.txt
 crash.log
 
 # Lambda build

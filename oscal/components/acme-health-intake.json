@@ -1,0 +1,137 @@
+{
+  "component-definition": {
+    "uuid": "a7fa51bc-bad6-4b16-9d89-a5ef2be2b3a1",
+    "metadata": {
+      "title": "Acme Health Patient Intake API — GRC wrap",
+      "last-modified": "2026-09-11T01:30:00.000000+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.2.1",
+      "parties": [
+        {
+          "uuid": "45fe3a9d-300a-4c8b-8986-06093da0ea57",
+          "type": "organization",
+          "name": "Acme Health (CGE-P capstone — gregorywilsonjr)"
+        }
+      ]
+    },
+    "components": [
+      {
+        "uuid": "e157a646-3485-4557-8e0e-da6d6ff4a072",
+        "type": "software",
+        "title": "acme-health-intake",
+        "description": "Patient Intake API from cgep-app-starter plus the GRC wrap in this repo: customer CMK, Object Lock evidence vault, CloudTrail, VPC-placed Lambda, and the eight GAPS.md remediations.",
+        "purpose": "Accept patient intake submissions over HTTPS and store ePHI in DynamoDB and S3 under a customer-controlled key, with a pipeline that signs every plan.",
+        "responsible-roles": [
+          { "role-id": "provider", "party-uuids": ["45fe3a9d-300a-4c8b-8986-06093da0ea57"] }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "f2c5bc13-7437-45b8-8408-aed8ed59c554",
+            "source": "../catalogs/hipaa-security-rule.json",
+            "description": "HIPAA Security Rule safeguards implemented by this wrap. Catalog is a 164.x subset aligned to NIST SP 800-66 Rev. 2 (https://csrc.nist.gov/pubs/sp/800/66/r2/final). Evidence objects are written by .github/workflows/grc-gate.yml into s3://acme-health-intake-evidence-a9082633 (COMPLIANCE, 30 days). Replace PENDING in hrefs with the first merged-run receipt after the pipeline has signed.",
+            "implemented-requirements": [
+              {
+                "uuid": "83648f6d-c171-497e-8e3d-25f8a012d8cf",
+                "control-id": "hipaa-164-312-a-2-iv",
+                "description": "GAP-01 and GAP-02. Uploads bucket uses aws:kms with alias/acme-health-intake-phi. DynamoDB table intake uses server_side_encryption with the same CMK. Key rotation is enabled.",
+                "props": [
+                  { "name": "implementation-status", "value": "implemented" },
+                  { "name": "gap", "value": "GAP-01" },
+                  { "name": "gap", "value": "GAP-02" },
+                  { "name": "hipaa-citation", "value": "164.312(a)(2)(iv)" },
+                  { "name": "terraform-resource", "value": "aws_s3_bucket_server_side_encryption_configuration.uploads" },
+                  { "name": "terraform-resource", "value": "aws_dynamodb_table.intake" },
+                  { "name": "terraform-resource", "value": "aws_kms_key.intake" }
+                ],
+                "links": [
+                  {
+                    "rel": "evidence",
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
+                    "text": "Signed grc-gate bundle (plan.json). Fill run id and versionId after the first successful Actions upload."
+                  }
+                ]
+              },
+              {
+                "uuid": "e3a1bc01-7ada-48fe-aec7-852fd7c9bc34",
+                "control-id": "hipaa-164-312-e-1",
+                "description": "GAP-03 and GAP-05. Uploads, vault, and trail buckets deny aws:SecureTransport=false. Lambda runs in the starter VPC private subnets with gateway endpoints for S3/DynamoDB and interface endpoints for KMS, logs, SQS, and X-Ray. No second VPC and no NAT.",
+                "props": [
+                  { "name": "implementation-status", "value": "implemented" },
+                  { "name": "gap", "value": "GAP-03" },
+                  { "name": "gap", "value": "GAP-05" },
+                  { "name": "hipaa-citation", "value": "164.312(e)(1)" },
+                  { "name": "terraform-resource", "value": "aws_s3_bucket_policy.uploads_tls" },
+                  { "name": "terraform-resource", "value": "aws_lambda_function.intake" }
+                ],
+                "links": [
+                  {
+                    "rel": "evidence",
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
+                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                  }
+                ]
+              },
+              {
+                "uuid": "62e8a828-89d6-418c-8787-83f7e54c8fac",
+                "control-id": "hipaa-164-308-a-7",
+                "description": "GAP-04 and GAP-06. Uploads, vault, and trail buckets have versioning Enabled. DynamoDB has PITR. Lambda has an SQS DLQ and Active X-Ray tracing. Reserved concurrency is not set: this account cannot reserve without dropping UnreservedConcurrentExecution below 10.",
+                "props": [
+                  { "name": "implementation-status", "value": "partial" },
+                  { "name": "gap", "value": "GAP-04" },
+                  { "name": "gap", "value": "GAP-06" },
+                  { "name": "hipaa-citation", "value": "164.308(a)(7)" },
+                  { "name": "terraform-resource", "value": "aws_s3_bucket_versioning.uploads" },
+                  { "name": "terraform-resource", "value": "aws_sqs_queue.lambda_dlq" }
+                ],
+                "links": [
+                  {
+                    "rel": "evidence",
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
+                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                  }
+                ]
+              },
+              {
+                "uuid": "e6f4ec7d-8fb1-4ab7-899a-81cb40bf6acd",
+                "control-id": "hipaa-164-312-a-1",
+                "description": "GAP-07. Lambda inline policy allows dynamodb:PutItem/GetItem and s3:PutObject/GetObject on the intake table and uploads prefix only, plus kms:Decrypt/GenerateDataKey on the PHI CMK.",
+                "props": [
+                  { "name": "implementation-status", "value": "implemented" },
+                  { "name": "gap", "value": "GAP-07" },
+                  { "name": "hipaa-citation", "value": "164.312(a)(1)" },
+                  { "name": "terraform-resource", "value": "aws_iam_role_policy.lambda_inline" }
+                ],
+                "links": [
+                  {
+                    "rel": "evidence",
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
+                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                  }
+                ]
+              },
+              {
+                "uuid": "02033bec-bf6e-44fe-9ead-24903e27298e",
+                "control-id": "hipaa-164-312-b",
+                "description": "GAP-08. HTTP API $default stage writes access logs to /aws/apigateway/acme-health-intake-* and throttles to 10 rps / 20 burst. WAF is out of scope for this sprint. Multi-region CloudTrail with log-file validation records management events.",
+                "props": [
+                  { "name": "implementation-status", "value": "partial" },
+                  { "name": "gap", "value": "GAP-08" },
+                  { "name": "hipaa-citation", "value": "164.312(b)" },
+                  { "name": "terraform-resource", "value": "aws_apigatewayv2_stage.default" },
+                  { "name": "terraform-resource", "value": "aws_cloudtrail.mgmt" }
+                ],
+                "links": [
+                  {
+                    "rel": "evidence",
+                    "href": "s3://acme-health-intake-evidence-a9082633/runs/PENDING/evidence-PENDING.tar.gz",
+                    "text": "Signed grc-gate bundle. Fill after first pipeline run."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "profile": {
+    "uuid": "059fcb91-6258-4fe6-ad78-e0172f9ab306",
+    "metadata": {
+      "title": "CGE-P minimum — HIPAA Security Rule selection for Acme Health",
+      "last-modified": "2026-09-11T01:30:00.000000+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.2.1"
+    },
+    "imports": [
+      {
+        "href": "../catalogs/hipaa-security-rule.json",
+        "include-controls": [
+          { "with-ids": ["hipaa-164-312-a-1", "hipaa-164-312-a-2-iv", "hipaa-164-312-b", "hipaa-164-312-e-1", "hipaa-164-308-a-7"] }
+        ]
+      }
+    ],
+    "merge": { "as-is": true }
+  }
+}

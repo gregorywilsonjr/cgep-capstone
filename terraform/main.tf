@@ -111,8 +111,15 @@ resource "aws_dynamodb_table" "intake" {
     type = "S"
   }
 
-  # No server_side_encryption block. Defaults to AWS-owned key.
-  # GAP-02: capstone learner expected to add this with a customer-owned key.
+  # GAP-02 closed: customer CMK (see kms.tf).
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = aws_kms_key.intake.arn
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 ######################################################################
@@ -167,7 +174,17 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# GAP-07: deliberately broad permissions on the workload data stores.
+resource "aws_iam_role_policy_attachment" "lambda_vpc" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+# GAP-07 closed: least privilege on PHI stores + CMK + DLQ.
 resource "aws_iam_role_policy" "lambda_inline" {
   name = "intake-data-access"
   role = aws_iam_role.lambda.id
@@ -176,14 +193,28 @@ resource "aws_iam_role_policy" "lambda_inline" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid      = "DynamoDBPut"
         Effect   = "Allow"
-        Action   = "dynamodb:*"
+        Action   = ["dynamodb:PutItem", "dynamodb:GetItem"]
         Resource = aws_dynamodb_table.intake.arn
       },
       {
+        Sid      = "S3PutAttachment"
         Effect   = "Allow"
-        Action   = "s3:*"
-        Resource = ["${aws_s3_bucket.uploads.arn}", "${aws_s3_bucket.uploads.arn}/*"]
+        Action   = ["s3:PutObject", "s3:GetObject"]
+        Resource = "${aws_s3_bucket.uploads.arn}/*"
+      },
+      {
+        Sid      = "KmsForPhi"
+        Effect   = "Allow"
+        Action   = ["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey", "kms:DescribeKey"]
+        Resource = aws_kms_key.intake.arn
+      },
+      {
+        Sid      = "Dlq"
+        Effect   = "Allow"
+        Action   = ["sqs:SendMessage"]
+        Resource = aws_sqs_queue.lambda_dlq.arn
       }
     ]
   })
@@ -197,6 +228,12 @@ resource "aws_lambda_function" "intake" {
   filename         = data.archive_file.handler.output_path
   source_code_hash = data.archive_file.handler.output_base64sha256
   timeout          = 10
+  tracing_config {
+    mode = "Active"
+  }
+  dead_letter_config {
+    target_arn = aws_sqs_queue.lambda_dlq.arn
+  }
 
   environment {
     variables = {
@@ -205,8 +242,21 @@ resource "aws_lambda_function" "intake" {
     }
   }
 
-  # GAP-05: no vpc_config block. Learner expected to add one referencing
-  # aws_subnet.private[*] and a hardened security group.
+  # GAP-05 closed: existing VPC, private subnets, no second VPC.
+  vpc_config {
+    subnet_ids         = aws_subnet.private[*].id
+    security_group_ids = [aws_security_group.lambda.id]
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_vpc,
+    aws_vpc_endpoint.s3,
+    aws_vpc_endpoint.dynamodb,
+    aws_vpc_endpoint.kms,
+    aws_vpc_endpoint.logs,
+    aws_vpc_endpoint.sqs,
+    aws_vpc_endpoint.xray,
+  ]
 }
 
 ######################################################################
@@ -237,7 +287,25 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.intake.id
   name        = "$default"
   auto_deploy = true
-  # GAP-08: no access_log_settings. Learner expected to wire CloudWatch logs.
+
+  default_route_settings {
+    throttling_burst_limit = 20
+    throttling_rate_limit  = 10
+  }
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.apigw.arn
+    format = jsonencode({
+      requestId      = "$context.requestId"
+      ip             = "$context.identity.sourceIp"
+      requestTime    = "$context.requestTime"
+      httpMethod     = "$context.httpMethod"
+      routeKey       = "$context.routeKey"
+      status         = "$context.status"
+      protocol       = "$context.protocol"
+      responseLength = "$context.responseLength"
+    })
+  }
 }
 
 resource "aws_lambda_permission" "apigw" {

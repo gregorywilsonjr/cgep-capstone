@@ -22,7 +22,7 @@ test: ## Smoke test the deployed API
 			-d '{"patient_id":"P-0001","fields":{"reason":"smoke-test"}}' \
 		| python3 -m json.tool
 
-destroy: ## Tear it all down
+destroy: ## Tear it all down (COMPLIANCE Object Lock will block vault object deletes for 30 days)
 	@$(CREDS) && cd terraform && terraform destroy -auto-approve
 
 fmt:

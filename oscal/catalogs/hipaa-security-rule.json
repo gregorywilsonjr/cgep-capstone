@@ -1,0 +1,51 @@
+{
+  "catalog": {
+    "uuid": "b248847d-f558-428a-a1a2-a24b9b8c8795",
+    "metadata": {
+      "title": "HIPAA Security Rule — Acme Health capstone subset",
+      "last-modified": "2026-09-11T01:30:00.000000+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.2.1",
+      "remarks": "NIST does not publish an official OSCAL catalog for the HIPAA Security Rule. This catalog is the 164.x citations this component implements, aligned to NIST SP 800-66 Rev. 2. Source publication: https://csrc.nist.gov/pubs/sp/800/66/r2/final"
+    },
+    "groups": [
+      {
+        "id": "hipaa-technical",
+        "title": "Technical Safeguards",
+        "controls": [
+          {
+            "id": "hipaa-164-312-a-1",
+            "title": "Access Control — 164.312(a)(1)",
+            "parts": [{ "id": "hipaa-164-312-a-1_smt", "name": "statement", "prose": "Implement technical policies and procedures for electronic information systems that maintain ePHI to allow access only to persons or software programs that have been granted access rights." }]
+          },
+          {
+            "id": "hipaa-164-312-a-2-iv",
+            "title": "Encryption and decryption — 164.312(a)(2)(iv)",
+            "parts": [{ "id": "hipaa-164-312-a-2-iv_smt", "name": "statement", "prose": "Implement a mechanism to encrypt and decrypt ePHI. This capstone uses a customer-managed KMS key." }]
+          },
+          {
+            "id": "hipaa-164-312-b",
+            "title": "Audit Controls — 164.312(b)",
+            "parts": [{ "id": "hipaa-164-312-b_smt", "name": "statement", "prose": "Implement hardware, software, and/or procedural mechanisms that record and examine activity in information systems that contain or use ePHI." }]
+          },
+          {
+            "id": "hipaa-164-312-e-1",
+            "title": "Transmission Security — 164.312(e)(1)",
+            "parts": [{ "id": "hipaa-164-312-e-1_smt", "name": "statement", "prose": "Implement technical security measures to guard against unauthorized access to ePHI that is being transmitted over an electronic communications network." }]
+          }
+        ]
+      },
+      {
+        "id": "hipaa-administrative",
+        "title": "Administrative Safeguards",
+        "controls": [
+          {
+            "id": "hipaa-164-308-a-7",
+            "title": "Contingency Plan — 164.308(a)(7)",
+            "parts": [{ "id": "hipaa-164-308-a-7_smt", "name": "statement", "prose": "Establish (and implement as needed) policies and procedures for responding to an emergency or other occurrence that damages systems that contain ePHI, including data backup." }]
+          }
+        ]
+      }
+    ]
+  }
+}
